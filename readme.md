@@ -49,3 +49,11 @@ Putin Says He'll Respect Ukraine Vote But U.S.
                 </title>
                 <description>
 The White House and State Department have called on the </description>
+
+问题:函数参数是数组该怎么传?
+解释:在函数间传递数组开销很大,很占内存,因为函数之间传递不安良是以值的方式传递
+    ,所以在需要数组时，应该传入指向数组的指针,这样只需要对应类型的字节数即可
+
+问题:切片?
+解释:切片是围绕动态数组概念构建的,可以按需自动增长和缩小.
+    切片动态增张是通过append来实现的.
