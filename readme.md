@@ -66,3 +66,33 @@ The White House and State Department have called on the </description>
      指针类型, 方法接收者可以是值也可以是指针
      指针接收者实现一个接口,那么只有指向那个类型的指针才能够实现对应的接口
      值接收者,则指针和值都可以
+     
+问题:go 中的os.signal
+解释:golang中对信号的处理主要使用os/signal包中的两个方法：一个是notify方法用来监听收到的信号；一个是 stop方法用来取消监听。
+   
+   func Notify(c chan<- os.Signal, sig ...os.Signal)
+   func main() {
+       c := make(chan os.Signal, 0)
+       signal.Notify(c)
+   
+       // Block until a signal is received.
+       s := <-c
+       fmt.Println("Got signal:", s) //Got signal: terminated
+   
+   }
+   结果分析：运行该程序，然后在终端中通过kill命令杀死对应的进程，便会得到结果
+   
+   第一个参数表示接收信号的channel, 第二个及后面的参数表示设置要监听的信号,如果不设置表示监听所有的信号
+   
+   func Stop(c chan<- os.Signal)
+   func main() {
+   	c := make(chan os.Signal, 0)
+   	signal.Notify(c)
+   
+   	signal.Stop(c) //不允许继续往c中存入内容
+   	s := <-c       //c无内容，此处阻塞，所以不会执行下面的语句，也就没有输出
+   	fmt.Println("Got signal:", s)
+   }
+
+
+   
