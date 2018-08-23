@@ -94,5 +94,7 @@ The White House and State Department have called on the </description>
    	fmt.Println("Got signal:", s)
    }
 
-
-   
+问题:pool?
+解释:使用有缓冲的通道实现资源池,来管理任意数量的go routine之间共享及独立使用资源.
+    这种模式在需要共享一组静态资源的情况(共享数据库连接或者内存缓冲区)下非常有用。
+    go routine需要从池里得到这些资源中的一个,它可以从池里申请,使用完后归还到资源池。
