@@ -98,3 +98,82 @@ The White House and State Department have called on the </description>
 解释:使用有缓冲的通道实现资源池,来管理任意数量的go routine之间共享及独立使用资源.
     这种模式在需要共享一组静态资源的情况(共享数据库连接或者内存缓冲区)下非常有用。
     go routine需要从池里得到这些资源中的一个,它可以从池里申请,使用完后归还到资源池。
+问题:log包关联的标志 
+解释:
+    const (
+        日期 yyyy/MM/dd
+        Ldate = 1 << iota
+        
+        时间 HH:mm:ss
+        Ltime
+        
+        毫秒级时间
+        Lmicroseconds
+        
+        完整路径的文件名和行号 完整路径.go:行号
+        Llongfile
+        
+        最终的文件名和行号 file.go:行号
+        Lshortfile
+        
+        标准日志记录器的初始值
+        LstFlags = Ldate | Ltime
+        
+    )
+问题:关键字iota
+解释:一般在常量声明区里有特殊的作用。这个关键字让编译器为每个常量复制相同的表达式
+    ,知道声明区结束,或者遇到一个新的赋值语句。
+    iota初始值为0，之后iota的值在每次处理为常量后,都会自增1,移位操作
+    const(
+        Ldate = 1 << iota   // 1 << 0 = 000000001 = 1
+        Ltime               // 1 << 1 = 000000010 = 2
+        Lmicroseconds       // 1 << 2 = 000000100 = 4
+        Llongfile           // 1 << 3 = 000001000 = 8
+        ...
+    )
+    
+问题:创建,初始化一个Logger类型的值?
+解释:用log.New()
+    func New(out io.Writer,prefix string,flag int) *Logger{
+        return &Logger{
+            out:out,
+            prefix:prefix,
+            flag:flag,
+        }
+    }
+    New创建一个新的Logger,out参数设置日志数据被写入的目的地
+    prefix会在生成的每行日志前面加一个前缀
+    flag定义日志记录包含哪些属性
+    
+问题:Writer接口
+解释:
+    type Writer interface{
+        Writer(p []byte) (n int,err error)
+    }
+    接收byte切片,返回写入的字节数,还有错误,write决不能改写切片里的数据
+    Write从p里向底层的数据流写入len(p)字节的数据,这个方法返回从p里写出的
+    字节数( 0<=n<=len(p) ) 提前结束会返回错误
+    
+问题:Reader接口
+解释:
+    type Reader interface{
+        Read(p []byte) (n int,err error)
+    }
+    接收一个字节切片,返回读入的字节数,一个error
+    说明:
+     <1> Read最多读入len(p)字节,保存到p,这个方法返回读入的字节数
+     0<=n<=len(p) 和任何读取时发生的错误。即便read返回的n < len(p)
+     方法也可能使用所有的p的空间存储临时数据。如果数据可以读取,但是字节长度
+     不足len(p),习惯上read会立即返回可用的数据,而不等待更多的数据;
+     <2> 当成功读取 n > 0字节后,如果遇到错误或者文件读取完成,read方法会返回读入的
+     字节数。方法可能会在本次调用返回一个非nil的错误,或者在下一次调用
+     时返回错误(同时 n == 0)。这种情况的一个例子是,在输入的流结束时,read会返回
+     非零的读取字节数,可能会返回err == EOF,也可能返回err == nil.无论如何,下一次
+     调用read应该返回0,EOF。
+     <3> 调用者在返回的 n > 0时,总应该先处理读入的数据,在处理错误err。这样
+     才能正确操作读取一部分字节后发生的I/O错误,EOF也要这样处理。
+     <4> Read的实现不鼓励返回0个读取字节的同时,返回nil值的错误。调用者
+     需要将这种返回状态视为没有做任何操作,而不是遇到读取结束。
+     
+     
+    
