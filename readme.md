@@ -173,7 +173,46 @@ The White House and State Department have called on the </description>
      <3> 调用者在返回的 n > 0时,总应该先处理读入的数据,在处理错误err。这样
      才能正确操作读取一部分字节后发生的I/O错误,EOF也要这样处理。
      <4> Read的实现不鼓励返回0个读取字节的同时,返回nil值的错误。调用者
+
      需要将这种返回状态视为没有做任何操作,而不是遇到读取结束。
      
      
+问题:内建变量类型
+解决:bool string
+int,int8,int16,int32,int64 前面加u标识无符号
+uintptr 
+byte rune(char 32位)
+float32,64,complex64,copmlex128
+
+i = 根号下 -1 i2 = -1 i3 = -i i4 = 1
+复数:3 + 4i
+
+     
+fmt.Errorf("err desc") 是err变量值
+
+问题:指针
+解决:
+    go是值传递
+
+问题:slice相关
+解决:
+    slice底层是数组,是数组的试图
+    slice可以向后扩展,不可以向前
+    s[i]不可以超越len(s)切片长度,向后扩展不可以超过底层数组cap(s)
+    添加元素时如果超过cap,系统会重新分配更大的底层数组
+    由于是值传递,append(slice,value)必须找一个变量接收
+问题:一个目录下面可以有几个包
+答案:一个目录下面只能有一个包,结构名不用重复包名
+
+
+问题:封装相关
+答案:
+
+问题:gopm下载
+答案:go get -v github.com/gpmgo/gopm
+    利用gopm下载goimports gopm get -g -v -u golang.org/x/tools/cmd/goimports
+问题:gopath下的目录
+答案:go build 编译   go install 产生pkg文件和
+可执行文件 go run 直接编译运行
+
     

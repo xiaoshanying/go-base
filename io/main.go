@@ -18,5 +18,5 @@ import (
 	b.WriteTo(os.Stdout)
 */
 func main() {
-	curl.Curl(os.Args[1], os.Args[2])
+
 }
